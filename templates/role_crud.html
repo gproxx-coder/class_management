@@ -1,0 +1,43 @@
+{% extends "base_admin.html" %}
+
+{% block base_admin %}
+<title>Role CRUD</title>
+
+<table cellpadding="20">
+        <tr>
+            <td width="1200"><h3>Welcome, {{username}}</h3></td>
+            <td><h3><a href="/logout">Logout</a></h3></td>
+        </tr>
+    </table>
+    <hr size="3px" style="color:red;">
+
+    <h2>Roles Crud Operation</h2>
+
+
+        <form action="/admin/role/save" method="post">
+            Role Id : <input type="text" value="{{role.id}}" name="rid" disabled> <br><br>
+            Role Name : <input type="text" value="{{role.role}}" name="role" required> <br><br>
+            <input type="submit" class="btn btn-success" value="Add/Update Role">
+        </form>
+
+        <hr> <br>
+    <table border="1" cellpadding="5px">
+        <thead>
+                <th>Role Id</th> <th>Role Name</th><th>Action</th>
+        </thead>
+        <tbody>
+                {% for role in roles %}
+                <tr>
+                    <td>{{role.id}}</td>
+                    <td>{{role.role}}</td>
+                    <td>
+                       <a href="/admin/role/edit/{{role.id}}">Edit </a>/
+                        <a href="/admin/role/delete/{{role.id}}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+
+        </tbody>
+    </table>
+
+{% endblock %}

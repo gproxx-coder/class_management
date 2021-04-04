@@ -1,0 +1,59 @@
+{% extends 'base_user.html' %}
+
+{% block base_user_image %}
+    {% if image_name %}
+        <img src="{{ url_for('static', filename=image_name ) }}" width="200" />
+    {% endif %}
+{% endblock %}
+
+
+{% block base_user %}
+
+<title>Your Batch Mates</title>
+
+    <table cellpadding="20">
+        <tr>
+            <td width="1200"><h3>Welcome, {{username}}</h3></td>
+            <td><h3><a href="/logout">Logout</a></h3></td>
+        </tr>
+    </table>
+    <hr size="3px" style="color:red;">
+
+    <h3>Your Batch Mates</h3>
+
+{% if final_batch_mates %}
+    <table border="1" cellpadding="5px">
+        <thead>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Batches</th>
+                <th>Request for Contact Number</th>
+        </thead>
+        <tbody>
+                {% for user in final_batch_mates %}
+                <tr>
+                    <td>{{user.fname}} {{user.lname}}</td>
+                    <td>{{user.email}}</td>
+                    <td>
+                        <table>
+                        {%for batch in user.batches_list%}
+                            <tr>
+                                <td>{{ batch.bcode }}</td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    </td>
+                    <td>
+                        <a href="/admin/user/edit/{{user.loginref.username}}">Request Contact</a>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    {% endif %}
+
+
+
+
+{% endblock %}

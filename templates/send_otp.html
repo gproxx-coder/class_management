@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://res.cloudinary.com/dxfq3iotg/raw/upload/v1569006288/BBBootstrap/choices.min.css?version=7.0.0">
+    <script src="https://res.cloudinary.com/dxfq3iotg/raw/upload/v1569006273/BBBootstrap/choices.min.js?version=7.0.0"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+
+    <title>Send OTP</title>
+</head>
+<body>
+
+    <div class="container">
+
+
+
+    <br><br>
+    <h5>A Verification Mail Will Be Sent To {{user_mail}}</h5><br>
+        {% if pending %}
+            <div class="alert alert-warning" role="alert">
+                {{pending}}
+            </div>
+            {% endif %}
+    <form action="/send_otp" method="post">
+        <input type="text" name="email" value="{{user_mail}}" required readonly="true">&nbsp&nbsp&nbsp
+        <input type="submit" class="btn btn-danger" value="Send OTP">
+    </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,118 @@
+{% extends "base_admin.html" %}
+{% block base_admin %}
+<title>Batch CRUD</title>
+
+    <table cellpadding="20">
+        <tr>
+            <td width="1200"><h3>Welcome, {{username}}</h3></td>
+            <td><h3><a href="/logout">Logout</a></h3></td>
+        </tr>
+    </table>
+    <hr size="3px" style="color:red;">
+
+    <h2>Batches Crud Operation</h2>
+
+    {% if msg %}
+        <h3>{{msg}}</h3> <br>
+    {% endif %}
+
+
+    {% if batch_search_flag %}
+        <div class="container">
+        <form action="/admin/search_batch" method="POST">
+            Enter Keyword: <input type="text" name="bcode" required><br><br>
+            <input type="submit" class="btn btn-primary" name="action" value="Batch by Name">
+            <input type="submit" class="btn btn-primary" name="action" value="Batch by Course">
+            <a href="/admin/batch/save" class="btn btn-primary">Add Course</a>
+        </form>
+        </div>
+    {% endif %}
+
+<!--///////////////////////////////////////////////////////////-->
+
+            {% if batch_add_flag %}
+        <br>
+        <form action="/admin/batch/save" method="post">
+            Batch Id : <input type="text" value="{{batch.id}}" name="bid" required> <br><br>
+            Batch Name : <input type="text" value="{{batch.bcode}}" name="bcode" required> <br><br>
+            Start Date : <input type="date" value="{{batch.start_date}}" name="bdate" required> <br><br>
+
+            Select Course:
+            <select name="courses" required>
+                {% for course in courses %}
+                        <option value="{{course.id}}" name="{{course.id}}">{{course.name}}</option>
+                {% endfor %}
+            </select>
+
+            <br>
+            <input type="submit" class="btn btn-success" value="Add/Update Batch">
+        </form>
+        {% endif %}
+
+<!--///////////////////////////////////////////////////////////-->
+
+    {% if batch_by_name or batch_by_course%}
+    <h4>{{found}}</h4>
+        <table border="1" cellpadding="5px">
+        <thead>
+                <th>Batch Id</th>
+                <th>Batch Name</th>
+                <th>Start Date</th>
+                <th>Course</th>
+                <th>Action</th>
+        </thead>
+        <tbody>
+                {% for bat in final_batches_list %}
+                <tr>
+                    <td>{{bat.id}}</td>
+                    <td>{{bat.bcode}}</td>
+                    <td>{{bat.start_date}}</td>
+                    <td>{{bat.courseref[0].name}}</td>
+
+                    <td>
+                       <a href="/admin/batch/edit/{{bat.id}}">Edit </a>/
+                        <a href="/admin/batch/delete/{{bat.id}}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+<!--///////////////////////////////////////////////////////////-->
+
+
+
+
+<!--///////////////////////////////////////////////////////////-->
+
+
+<!--///////////////////////////////////////////////////////////-->
+
+        <hr> <br>
+    <table border="1" cellpadding="5px">
+        <thead>
+                <th>Batch Id</th>
+                <th>Batch Name</th>
+                <th>Start Date</th>
+                <th>Course</th>
+                <th>Action</th>
+        </thead>
+        <tbody>
+                {% for bat in all_batches %}
+                <tr>
+                    <td>{{bat.id}}</td>
+                    <td>{{bat.bcode}}</td>
+                    <td>{{bat.start_date}}</td>
+                    <td>{{bat.courseref[0].name}}</td>
+
+                    <td>
+                       <a href="/admin/batch/edit/{{bat.id}}">Edit </a>/
+                        <a href="/admin/batch/delete/{{bat.id}}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

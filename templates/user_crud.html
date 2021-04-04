@@ -1,0 +1,305 @@
+{% extends "base_admin.html" %}
+
+{% block base_admin %}
+
+<title>User CRUD</title>
+
+
+<table cellpadding="20">
+        <tr>
+            <td width="1200"><h3>Welcome, {{username}}</h3></td>
+            <td><h3><a href="/logout">Logout</a></h3></td>
+        </tr>
+    </table>
+    <hr size="3px" style="color:red;">
+
+    <h2>Users Crud Operation</h2>
+
+        {% if msg %}
+        <div class="alert alert-success" role="alert">
+          <h4>{{msg}}</h4>
+        </div>
+        <br>
+        {% endif %}
+
+
+
+<!--//////////////////////////////////////////////////////////////////////////-->
+
+    {% if user_search_flag %}
+        <form action="/admin/search_user" method="POST">
+            Enter Keyword: <input type="text" value="{{keyword}}" name="name" required><br><br>
+            Search:
+            <input type="submit" class="btn btn-primary" name="action" value="User by Name">
+            <input type="submit" class="btn btn-primary" name="action" value="User by Username">
+            <input type="submit" class="btn btn-primary" name="action" value="User by Batch">
+            <input type="submit" class="btn btn-primary" name="action" value="User by Status">
+            <input type="submit" class="btn btn-primary" name="action" value="User by Role">
+<!--            <a href="/admin/user/save" class="btn btn-primary">Add User</a>-->
+        </form>
+        <hr style="border: 1px solid red;">
+    {% endif %}
+
+
+<!--//////////////////////////////////////////////////////////////////////////-->
+
+    {% if user_add_flag %}
+        <form action="/admin/user/save" method="post">
+            User Id : <input type="text" value="{{login.userref.id}}" name="uid"> <br><br>
+            User First Name : <input type="text" value="{{login.userref.fname}}" name="fname"> <br><br>
+            User Last Name : <input type="text" value="{{login.userref.lname}}" name="lname"> <br><br>
+
+            Email : <input type="text" value="{{login.userref.email}}" name="email"> <br><br>
+            Contact : <input type="text" value="{{login.userref.contact}}" name="contact"> <br><br>
+            City : <input type="text" value="{{login.userref.city}}" name="city"> <br><br>
+            Gender : <input type="text" value="{{login.userref.gender}}" name="gender"> <br><br>
+
+            Username: <input type="text" value="{{login.username}}" name="username"> <br><br>
+
+            Current Status: <input type="text" value="{{login.statusref.status}}" name="status" disabled>
+
+            Change Status:
+            <select name="new_status">
+                {% for status in all_statuses %}
+                    {% if status.id == login.statusref.id %}
+                        <option value="{{status.id}}" name="{{status.id}}" selected>{{status.status}}</option>
+                    {% else %}
+                        <option value="{{status.id}}" name="{{status.id}}">{{status.status}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select><br><br>
+
+            Current Role: <input type="text" value="{{login.roleref.role}}" name="role" disabled>
+
+            Change Role:
+            <select name="new_role">
+                {% for role in all_roles %}
+                    {% if role.id == login.roleref.id %}
+                        <option value="{{role.id}}" name="{{role.id}}" selected>{{role.role}}</option>
+                    {% else %}
+                        <option value="{{role.id}}" name="{{role.id}}">{{role.role}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select><br><br>
+
+            Associated Batches:
+            <select name="batches" multiple>
+                {% for batch in batches %}
+                        <option value="{{batch.id}}" name="{{batch.id}}">{{batch.bcode}}</option>
+                {% endfor %}
+            </select>
+
+            <input type="submit" class="btn btn-success" value="Add/Update User">
+        </form>
+        <hr> <br>
+    {% endif %}
+
+<!--/////////////////////----USER BY NAME or BATCH-----/////////////////////////-->
+
+
+    {% if found1 %}
+    <div class="alert alert-info" role="alert">
+        <h5><b>{{ found1 }}</b></h5>
+    </div>
+    {% endif %}
+
+{% if user_by_name or user_by_batch %}
+    <table border="1" cellpadding="5px">
+        <thead>
+                <th>User Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>City</th>
+                <th>Gender</th>
+                <th>Username</th>
+                <th>Status</th>
+                <th>Role</th>
+                <th>Interests</th>
+                <th>Batches</th>
+                <th>Operations</th>
+        </thead>
+        <tbody>
+                {% for user in final_users_list %}
+                <tr>
+                    <td>{{user.id}}</td>
+                    <td>{{user.fname}} {{user.lname}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.contact}}</td>
+                    <td>{{user.city}}</td>
+                    <td>{{user.gender}}</td>
+                    <td>{{user.loginref.username}}</td>
+                    <td>{{user.loginref.statusref.status}}</td>
+                    <td>{{user.loginref.roleref.role}}</td>
+
+                    <td>
+                        <table>
+                        {%for course in user.loginref.userref.courses_list%}
+                            <tr>
+                                <td>{{ course.name }}</td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    </td>
+
+                    <td>
+                        <table>
+                        {%for batch in user.batches_list%}
+                            <tr>
+                                <td>{{ batch.bcode }}</td>
+                                <td><a href="/admin/user/batch/delete/{{user.id}}/{{batch.id}}">Delete</a></td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    </td>
+                    <td>
+                        {% if not user.loginref.id == 1 %}
+                        <a href="/admin/user/edit/{{ user.loginref.id }}">Edit </a>/
+                        <a href="/admin/user/delete/{{ user.loginref.id }}">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+
+        </tbody>
+    </table>
+{% endif %}
+
+<!--/////////////////////----USER BY USERNAME or STATUS or ROLE-----/////////////////////////-->
+
+    {% if found2 %}
+    <div class="alert alert-info" role="alert">
+        <h5><b>{{ found2 }}</b></h5>
+    </div>
+    {% endif %}
+
+{% if user_by_username or user_by_status or user_by_role %}
+    <table border="1" cellpadding="5px">
+        <thead>
+                <th>User Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>City</th>
+                <th>Gender</th>
+                <th>Username</th>
+                <th>Status</th>
+                <th>Role</th>
+                <th>Interests</th>
+                <th>Batches</th>
+                <th>Operations</th>
+        </thead>
+        <tbody>
+                {% for login in final_username_list %}
+                <tr>
+                    <td>{{login.userref.id}}</td>
+                    <td>{{login.userref.fname}} {{login.userref.lname}}</td>
+                    <td>{{login.userref.email}}</td>
+                    <td>{{login.userref.contact}}</td>
+                    <td>{{login.userref.city}}</td>
+                    <td>{{login.userref.gender}}</td>
+                    <td>{{login.username}}</td>
+                    <td>{{login.statusref.status}}</td>
+                    <td>{{login.roleref.role}}</td>
+
+                    <td>
+                        <table>
+                        {%for course in login.userref.courses_list%}
+                            <tr>
+                                <td>{{ course.name }}</td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    </td>
+
+                    <td>
+                        <table>
+                        {%for batch in login.userref.batches_list%}
+                            <tr>
+                                <td>{{ batch.bcode }}</td>
+                                <td><a href="/admin/user/batch/delete/{{login.userref.id}}/{{batch.id}}">Delete</a></td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    </td>
+                    <td>
+                        {% if not login.id == 1 %}
+                        <a href="/admin/user/edit/{{login.id}}">Edit </a>/
+                        <a href="/admin/user/delete/{{login.id}}">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+
+        </tbody>
+    </table>
+{% endif %}
+
+
+<!--//////////////////////////////////////////////////////////////////////////-->
+    <br>
+    <h4>All Users</h4>
+    <table border="1" cellpadding="5px">
+        <thead>
+                <th>Photo</th>
+                <th>User Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>City</th>
+                <th>Gender</th>
+                <th>Username</th>
+                <th>Status</th>
+                <th>Role</th>
+                <th>Interests</th>
+                <th>Batches</th>
+                <th>Operations</th>
+        </thead>
+        <tbody>
+                {% for login in logins %}
+                <tr>
+                    <td><img src="{{ url_for('static', filename=login.userref.image)}}" width="120" /></td>
+
+                    <td>{{login.userref.id}}</td>
+                    <td>{{login.userref.fname}} {{login.userref.lname}}</td>
+                    <td>{{login.userref.email}}</td>
+                    <td>{{login.userref.contact}}</td>
+                    <td>{{login.userref.city}}</td>
+                    <td>{{login.userref.gender}}</td>
+                    <td>{{login.username}}</td>
+                    <td>{{login.statusref.status}}</td>
+                    <td>{{login.roleref.role}}</td>
+
+                    <td>
+                        <table>
+                        {%for course in login.userref.courses_list%}
+                            <tr>
+                                <td>{{ course.name }}</td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    </td>
+
+                    <td>
+                        <table>
+                        {%for batch in login.userref.batches_list%}
+                            <tr>
+                                <td>{{ batch.bcode }}</td>
+                                <td><a href="/admin/user/batch/delete/{{login.userref.id}}/{{batch.id}}">Delete</a></td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    </td>
+                    <td>
+                        {% if not login.id == 1 %}
+                        <a href="/admin/user/edit/{{login.id}}">Edit </a>/
+                        <a href="/admin/user/delete/{{login.id}}">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+
+        </tbody>
+    </table>
+
+{% endblock %}
