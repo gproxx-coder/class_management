@@ -97,3 +97,5 @@ class Batch(db.Model):
 if __name__ == '__main__':
     # db.drop_all()
     db.create_all()
+
+    #This new line is added now
